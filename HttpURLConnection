@@ -1,0 +1,82 @@
+activity_main.xml
+   <Button
+        android:id="@+id/sendRequest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/send_request"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/showResponse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </ScrollView>
+    
+MainActivity.java
+    public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+    private final static int SHOW_RESPONSE = 0;
+    private Button send_request;
+    private TextView show_response;
+
+    private Handler handler = new Handler() {
+      public void handleMessage(Message msg) {
+          switch (msg.what) {
+              case SHOW_RESPONSE:
+                  String response = (String)msg.obj;
+                  //在这里进行UI操作，将结果显示到界面上
+                  show_response.setText(response);
+          }
+      }
+    };
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        send_request = (Button) findViewById(R.id.sendRequest);
+        show_response = (TextView) findViewById(R.id.showResponse);
+        send_request.setOnClickListener(this);
+
+    }
+    @Override
+    public void onClick(View view) {
+        if (view.getId()==R.id.sendRequest) {
+            sendRequestWithHttpUrlConnection();
+        }
+    }
+    public void sendRequestWithHttpUrlConnection() {
+        //开启线程发起网络请求
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection httpUrlConnection = null;
+                try {
+                    URL url = new URL("https://www.baidu.com");
+                    httpUrlConnection = (HttpURLConnection)url.openConnection();
+                    httpUrlConnection.setRequestMethod("GET");
+                    httpUrlConnection.setConnectTimeout(8000);
+                    httpUrlConnection.setReadTimeout(8000);
+                    InputStream in = httpUrlConnection.getInputStream();
+                    //对获取到的输入流进行读取
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line=reader.readLine())!=null) {
+                        response.append(line);
+                    }
+                    Message message = new Message();
+                    message.what = SHOW_RESPONSE;
+                    //子线程无法操作UI，将服务器返回的结果存放到Message中
+                    message.obj = response.toString();
+                    handler.sendMessage(message);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    if (httpUrlConnection!=null){
+                        httpUrlConnection.disconnect();
+                    }
+                }
+            }
+        }).start();
+
+    }
+}
