@@ -1,0 +1,60 @@
+/**
+*第一步：调用 SharedPreferences 对象的 edit() 方法来获取一个 SharedPreferences.Editor 对象
+*第二步：向 SharedPreferences.editor() 对象中添加数据，比如添加布尔型用putBoolean(key,value)等
+*第三部：调用commit()方法提交添加的数据，存储完成
+*/
+MainActivity.java
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Button bt_saveData = (Button) findViewById(R.id.save_data);
+        Button bt_restoreData = (Button) findViewById(R.id.restore_data);
+
+        bt_saveData.setOnClickListener(this);
+        bt_restoreData.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.save_data:
+                /**
+                *Context类的getSharedPreferences(String,int)方法第一个参数是字符串型，用于生成str_name.xml存储数据
+                *第二个参数是int型，默认是MODE_PRIVATE，即0.表示只有当前应用程序才可对该SharedPreferences文件进行读写
+                *还有参数MODE_MULTI_PROCESS表示有多个进程同同一个SharedPreferences文件进行读写
+                */
+                SharedPreferences.Editor editor = getSharedPreferences("Msg",MODE_PRIVATE).edit();
+                editor.putString("name","ergouzi");
+                editor.putInt("age",8);
+                editor.commit();
+                break;
+            case R.id.restore_data:
+                SharedPreferences restoreData = getSharedPreferences("Msg",MODE_PRIVATE);
+                String name = restoreData.getString("name","sangouzi");
+                int age = restoreData.getInt("age",110);
+                Toast.makeText(this, name, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,String.valueOf(age),Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                break;
+        }
+    }
+
+
+activity_main.xml
+    //第一个button用于存储数据，第二个button用于读取数据
+    <Button
+        android:id="@+id/save_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save Data"
+        android:textAllCaps="false"/>
+    <Button
+        android:id="@+id/restore_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Restore Data"
+        android:textAllCaps="false"/>
+        
+  
