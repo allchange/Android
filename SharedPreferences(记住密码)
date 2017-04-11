@@ -1,0 +1,79 @@
+login.xml
+  <EditText
+        android:id="@+id/edit_account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:hint="account"/>
+    <EditText
+        android:id="@+id/edit_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:hint="password"/>
+    <CheckBox
+        android:id="@+id/remember_account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="remember password"/>
+    <Button
+        android:id="@+id/bt_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="LogIn"
+        android:textAllCaps="false"/>
+        
+LoginActivity.java
+      private EditText accountEdit;
+    private EditText passwordEdit;
+    private Button loginButton;
+    private CheckBox rememberPassword;
+    private SharedPreferences preferences;
+    private SharedPreferences.Editor editor;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+        initView();
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isRemember = preferences.getBoolean("remember_password",false);
+        if (isRemember){
+            //将账号密码设置到文本框中，即记住账号密码
+            String account = preferences.getString("account","");
+            String password = preferences.getString("password","");
+            accountEdit.setText(account);
+            passwordEdit.setText(password);
+            rememberPassword.setChecked(true);
+        }
+
+        loginButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                String account = accountEdit.getText().toString();
+                String password = passwordEdit.getText().toString();
+                if (account.equals("dajiji") && password.equals("ji123")) {
+                    editor = preferences.edit();
+                    if (rememberPassword.isChecked()){
+                        editor.putString("account",account);
+                        editor.putString("password",password);
+                        editor.putBoolean("remember_password",true);
+                    } else {
+                        editor.clear();
+                    }
+                    editor.commit();
+                    Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(LoginActivity.this,"err",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+    public void initView() {
+        accountEdit = (EditText) findViewById(R.id.edit_account);
+        passwordEdit = (EditText) findViewById(R.id.edit_password);
+        loginButton = (Button) findViewById(R.id.bt_login);
+        rememberPassword = (CheckBox) findViewById(R.id.remember_account);
+    }
