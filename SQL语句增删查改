@@ -1,0 +1,27 @@
+查：Cursor cursor = db.rawQuery("select*from book",null)；
+    
+    Cursor cursor = db.query("Book",null,null,null,null,null,null);
+
+增：db.execSQL("insert into Book(name,author,pages,price)values(?,?,?,?)",new String[]{"The Da Vinci Code","Dan Brown","454","16.96"});
+   db.execSQL("insert into Book(name,author,pages,price)values(?,?,?,?)",new String[]{"The Lost Symbol","Dan Brown","510","22.22"});
+  
+  ContentValues values = new ContentValues();
+  values.put("name","The Da Vinci Code");
+  values.put("author","Dan Brown");
+  values.put("pages",454);
+  values.put("price",12.21);
+  db.insert("Book",null,values);//插入第一条数据
+
+                values.put("name","The Lost Symbol");
+                values.put("author","Dan Brown");
+                values.put("pages",510);
+                values.put("price",19.91);
+                db.insert("Book",null,values);//插入第二条数据
+                
+更新：db.execSQL("update Book set price=? where name=?",new String[]{"10.99","The Da Vinci Code"});
+
+     ContentValues values = new ContentValues();
+     values.put("price",1.1);
+     db.update("Book",values,"name=?",new String[]{"The Lost Symbol"});
+     
+删除：db.execSQL("delete from Book where pages=?",new String[]{"500});
