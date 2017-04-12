@@ -1,0 +1,23 @@
+ 若删除成功，则更新，否则，不删除。
+ 
+                SQLiteDatabase db = helper.getWritableDatabase();
+                db.beginTransaction();
+                try{
+                    db.execSQL("delete from Book");
+//                    db.delete("Book",null,null);
+//                    if (true){
+//                        throw new Exception();
+//                    }
+//                    ContentValues values = new ContentValues();
+//                    values.put("name","fire");
+//                    values.put("author","tao");
+//                    values.put("price",89);
+//                    values.put("pages",900);
+//                    db.insert("Book",null,values);
+                    db.execSQL("insert into Book(name,author,pages,price)values(?,?,?,?)",new String[]{"fire","tao","89","900"});
+                    db.setTransactionSuccessful();
+                } catch (Exception e){
+                    e.printStackTrace();
+                } finally {
+                    db.endTransaction();
+                }
