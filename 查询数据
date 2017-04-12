@@ -1,0 +1,25 @@
+SQLiteDatabase 提供了query()方法，最短的一个方法重载也需要传入七个参数
+第一个：表名
+第二个：用于指定去查询哪几列
+第三/四个：用于指定去查询某一行或某几行数据，不指定默认查询所有行
+第五个：用于指定需要去group by的列，不指定默认所有
+第六个：group by后数据进一步过滤，不指定则不过滤
+第七个：查询结果排序方式，不指定默认
+
+这里只传染第一个参数即表名
+
+MainActivity.java
+    SQLiteDatabase db = helper.getWritableDatabase();
+                //查询表中所有数据
+                Cursor cursor = db.query("Book",null,null,null,null,null,null);
+                if (cursor.moveToFirst()){
+                    String name;
+                    do{
+                        name = cursor.getString(cursor.getColumnIndex("name"));
+                        String author = cursor.getString(cursor.getColumnIndex("author"));
+                        int pages = cursor.getInt(cursor.getColumnIndex("pages"));
+                        double price = cursor.getDouble(cursor.getColumnIndex("price"));
+                    } while (cursor.moveToNext());
+                    showData.setText(name);
+                }
+                cursor.close();
