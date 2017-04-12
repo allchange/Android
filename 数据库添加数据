@@ -1,0 +1,38 @@
+SQLiteDatabase 中提供了一个insert()方法，三个参数
+第一个是表名，第二个用于在未指定添加数据的情况下给某些可为空的列自动赋值null
+第三个是一个ContentValues，提供一系列put()方法重载，用于向ContentValues添加数据，只需要将表中每个列名以及相应的待添加数据传入即可
+
+activity_main.xml
+    <Button
+        android:id="@+id/create_database"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="Create Database"/>
+    <Button
+        android:id="@+id/add_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="Add Data"/>
+    
+MainActivity.java
+    addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SQLiteDatabase db = helper.getWritableDatabase();
+                ContentValues values = new ContentValues();
+
+                values.put("name","The Da Vinci Code");
+                values.put("author","Dan Brown");
+                values.put("pages",454);
+                values.put("price",12.21);
+                db.insert("Book",null,values);//插入第一条数据
+
+                values.put("name","The Lost Symbol");
+                values.put("author","Dan Brown");
+                values.put("pages",510);
+                values.put("price",19.91);
+                db.insert("Book",null,values);//插入第二条数据
+            }
+        });
