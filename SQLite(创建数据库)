@@ -10,8 +10,8 @@
     }
     //第一个参数是Context,必须有它才能对数据库进行操作，第二个参数是数据库名，第三个参数允许我们在查询数据的时候返回一个自定义的Cursor，一般传入null,
     //第四个参数是数据库版本号，创建实例后，再调用getReadableDatabase()/get..方法即可创建数据库。
-    //第四个参数是数据库版本号:当已创建数据库，需要新建数据库时，在onUpgrade()中执行db.exec("drop table is exists db_name"),在onCreate()执行
-    //db.exec(创建语句)，再修改一个比之前数字大的版本号即可。
+    //第四个参数是数据库版本号:当已创建数据库，需要新建数据库时，在onUpgrade()中执行db.exec("drop table is exists db_name"),调用onCreate()
+    //在onCreate()执行db.exec(创建语句)，再修改一个比之前数字大的版本号即可。
     
 MyDatabase.java(继承类SQLiteOpenHelper)
           private Context mContext;
