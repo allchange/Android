@@ -1,0 +1,66 @@
+安卓中通过抽象类SQLiteOpenHelper来创建和升级数据库，抽象方法onCreate()/onUpgrade()分别用来实现创建和升级数据库的逻辑
+
+    getReadableDatabase()/getWritableDatabase()两个方法用来创建或打开数据库(数据库已存在就打开,否则创建)，并返回一个可对数据库进行读写操作的对象。
+区别是当数据库不可写入时（如磁盘已满)前者返回的对象将以只读的方式打开数据库，后者则出现异常。
+
+    SQLiteOpenHelper有两个构造方法
+     public MyDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+        super(context, name, factory, version);
+        mContext = context;
+    }
+    //第一个参数是Context,必须有它才能对数据库进行操作，第二个参数是数据库名，第三个参数允许我们在查询数据的时候返回一个自定义的Cursor，一般传入null,
+    //第四个参数是数据库版本号，创建实例后，再调用getReadableDatabase()/get..方法即可创建数据库。
+    //第四个参数是数据库版本号:当已创建数据库，需要新建数据库时，在onUpgrade()中执行db.exec("drop table is exists db_name"),在onCreate()执行
+    //db.exec(创建语句)，再修改一个比之前数字大的版本号即可。
+    
+MyDatabase.java(继承类SQLiteOpenHelper)
+          private Context mContext;
+          public static final String CREATE_BOOK = "create table Book("
+                  +"id integer primary key,"
+                  +"author text,"
+                  +"price real,"
+                  +"pages integer,"
+                  +"name text)";
+         
+          public MyDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+              super(context, name, factory, version);
+              mContext = context;
+          }
+
+          @Override
+          public void onCreate(SQLiteDatabase db) {
+              db.execSQL(CREATE_BOOK);
+              db.execSQL(CREATE_CATEGORY);
+              Toast.makeText(mContext,"YEP",Toast.LENGTH_SHORT).show();
+          }
+
+          @Override
+          public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+             //该方法当需要升级数据库时添加逻辑
+          }
+
+MainActivity.java
+      private MyDatabaseHelper helper;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        helper = new MyDatabaseHelper(this,"BookStore.db",null,1);//版本号当升级数据库时修改
+        Button dbButton = (Button) findViewById(R.id.create_database);
+        dbButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                helper.getReadableDatabase();//创建数据库
+            }
+        });
+
+    }
+    
+activity_main.xml
+    <Button
+        android:id="@+id/create_database"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create Database"/>
+        
