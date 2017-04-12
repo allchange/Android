@@ -1,6 +1,6 @@
 安卓中通过抽象类SQLiteOpenHelper来创建和升级数据库，抽象方法onCreate()/onUpgrade()分别用来实现创建和升级数据库的逻辑
 
-    getReadableDatabase()/getWritableDatabase()两个方法用来创建或打开数据库(数据库已存在就打开,否则创建)，并返回一个可对数据库进行读写操作的对象。
+    getReadableDatabase()/getWritableDatabase()两个方法用来创建或打开数据库(数据库已存在就打开,否则创建)，并返回一个可对数据库进行读写操作的对象SQLiteDatabase。
 区别是当数据库不可写入时（如磁盘已满)前者返回的对象将以只读的方式打开数据库，后者则出现异常。
 
     SQLiteOpenHelper有两个构造方法
