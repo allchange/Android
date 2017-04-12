@@ -1,0 +1,6 @@
+delete()提供了三个参数
+第一个：表名
+第二/三个：约束删除某一行或某几行数据
+MainActivity.java
+                SQLiteDatabase db = helper.getWritableDatabase();
+                db.delete("Book","pages>?",new String[]{"500"});
