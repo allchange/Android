@@ -1,0 +1,12 @@
+update()方法共有四个参数
+第一个:表名
+第二个：ContentValues对象，把更新数据在这里组装进去
+第三/四个：约束更新某一个或某几行数据，不指定默认所有行
+
+MainActivity.java
+  SQLiteDatabase db = helper.getWritableDatabase();
+  ContentValues values = new ContentValues();
+  values.put("price",1.1);
+  db.update("Book",values,"name=?",new String[]{"The Lost Symbol"});
+  //第三个参数对应where子句，表示去更新所有name等于？的行，而？是一个占位符
+  //第四个参数对应提供的一个字符串数组为第三个参数中每个占位符制定相应内容
