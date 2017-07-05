@@ -1,0 +1,159 @@
+Blog.java
+ 
+      public class Blog {
+          private String title;
+          private String time;
+          private String content;
+
+          public Blog(String title, String time, String content) {
+              this.title = title;
+              this.time = time;
+              this.content = content;
+          }
+
+          public String getTitle() {
+              return title;
+          }
+
+          public String getTime() {
+              return time;
+          }
+
+          public String getContent() {
+              return content;
+          }
+      }
+BlogAdapter.java
+          public class BlogAdapter extends ArrayAdapter<Blog> {
+          private int resourceId;
+
+          public BlogAdapter( Context context,int resource, List<Blog> list) {
+              super(context, resource, list);
+              resourceId = resource;
+          }
+          public View getView(int position,View convertView,ViewGroup parenet){
+              Blog blog = getItem(position);
+              View rootView = null;
+              if (rootView!=null){
+                  rootView = LayoutInflater.from(getContext()).inflate(resourceId,null);
+              } else {
+                  rootView = convertView;
+              }
+              TextView titleView = (TextView) rootView.findViewById(R.id.show_title);
+              titleView.setText(blog.getTitle());
+              TextView timeView = (TextView) rootView.findViewById(R.id.show_time);
+              titleView.setText(blog.getTime());
+              TextView contentView = (TextView) rootView.findViewById(R.id.show_content);
+              titleView.setText(blog.getContent());
+              return rootView;
+          }
+        }
+JSONUtil.java
+      public class JSONUtil {
+        private static String getResponse = null;
+        public static JSONObject getJSON(String url) throws JSONException, Exception {
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    HttpURLConnection httpURLConnection = null;
+                    try {
+                        URL url = new URL("http://xmuer.club/getblog.php");
+                        httpURLConnection = (HttpURLConnection) url.openConnection();
+                        httpURLConnection.setRequestMethod("GET");
+                        httpURLConnection.setConnectTimeout(8000);
+                        httpURLConnection.setReadTimeout(8000);
+                        //对获取到的输入流进行读取
+                        InputStream in = httpURLConnection.getInputStream();
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                        StringBuilder response = new StringBuilder();
+                        String line;
+                        while ((line=reader.readLine())!=null) {
+                            response.append(line);
+                        }
+                        getResponse = response.toString();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (httpURLConnection!=null){
+                            httpURLConnection.disconnect();
+                        }
+                    }
+                }
+            }).start();
+            return new JSONObject(getResponse);
+        }
+      }
+BlueActivity.java
+      public class BlueActivity extends AppCompatActivity {
+        private static final String BASE_URL = "http://xmuer.club/getblog.php";
+        private ArrayList<Blog> list = getList();
+
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_blue);
+
+            ListView listView = (ListView) findViewById(R.id.list_view);
+            BlogAdapter adapter = new BlogAdapter(BlueActivity.this,R.layout.blog_item,list);
+            listView.setAdapter(adapter);
+        }
+
+        private static ArrayList<Blog> getList() {
+            ArrayList<Blog> blogList = new ArrayList();
+            try {
+                JSONObject jsonObject = JSONUtil.getJSON(BASE_URL);
+                JSONArray jsonArray = jsonObject.getJSONArray("blog");
+                for (int i=0;i<jsonArray.length();i++){
+                    JSONObject object = jsonArray.getJSONObject(i);
+                    String title = object.getString("title");
+                    String time = object.getString("time");
+                    String content = object.getString("content");
+                    blogList.add(new Blog(title,time,content));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (blogList!=null){
+                return blogList;
+            } else {
+                return null;
+            }
+        }
+
+    }
+
+
+activity_blue.xml
+    <ListView
+        android:id="@+id/list_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+        
+list_item.xml
+
+    <TextView
+        android:id="@+id/show_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="worinima"/>
+    <LinearLayout
+        android:layout_marginTop="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/show_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="13:38:23"/>
+        <TextView
+            android:id="@+id/show_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            tools:text="I love you"/>
+
+    </LinearLayout>
