@@ -131,7 +131,7 @@ activity_blue.xml
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
         
-list_item.xml
+blog_item.xml
 
     <TextView
         android:id="@+id/show_title"
