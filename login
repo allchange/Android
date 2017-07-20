@@ -1,3 +1,5 @@
+检查网络，如果无网则显示，登录失败则显示账号密码错误，登录成功则跳转至Activity Diao。用AsyncTask发动网络请求更新UI操作。
+
 activity_main.xml
   <TextView
         android:id="@+id/show_tv"
